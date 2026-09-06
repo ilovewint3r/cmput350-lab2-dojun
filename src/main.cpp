@@ -195,6 +195,11 @@ void handleInput(sf::Window& window, GameState& gameState, const ResourceManager
         // TODO: (Q2)
         //  implement jump logic (the key press should be space) and play jump sound fx
         // ====== ====== ======
+        if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()){
+            if (keyPressed->scancode == sf::Keyboard::Scan::Space){
+                resources.jumpSound->play();
+            }
+        }
     }
 }
 
@@ -241,6 +246,18 @@ int main() {
         //            std::cout << "value is " << *intPtr << '\n';
         //            std::cout << "raw address is " << intPtr.get() << '\n';
         // ====== ====== ======
+
+        // initialize soundbuffer and sound on the heap with "new"
+        // use .reset() on unique ptr in resources to set soundbuffer and sound
+        sf::SoundBuffer* soundBuffer = new sf::SoundBuffer();
+        if (!soundBuffer->loadFromFile("assets/jump.wav")){
+            std::cerr << "Error loading sound for jump.wav.\n";
+        }
+
+        resources.jumpSoundBuffer.reset(soundBuffer);
+
+        sf::Sound* sound = new sf::Sound(*resources.jumpSoundBuffer);
+        resources.jumpSound.reset(sound);
 
         bool shouldQuit = false;
         // Main game loop
