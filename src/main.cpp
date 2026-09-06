@@ -138,9 +138,8 @@ private:
         //    the tubes and restarting the game (setting the bird back to original initial position)
         // ====== ====== ======
         float yPos = bird.shape.getPosition().y;
-        if (yPos < 0 || yPos > 800){
-            resetTubes();
-            bird.shape.setPosition({BIRD_INIT_X, BIRD_INIT_Y});
+        if (yPos < 0 || yPos > WINDOW_HEIGHT){
+            resetBird();
         }
     }
 
@@ -173,11 +172,26 @@ private:
         //  with another
         // ====== ====== ======
 
+        sf::FloatRect birdAABB = bird.shape.getGlobalBounds();
+        for (auto &tube : tubes){
+            sf::FloatRect topTubeAABB = tube.topTube.getGlobalBounds();
+            sf::FloatRect bottomTubeAABB = tube.bottomTube.getGlobalBounds();
+            if (birdAABB.findIntersection(topTubeAABB) || birdAABB.findIntersection(bottomTubeAABB)){
+                resetBird();
+            }
+        }
+
         // ====== ====== ======
         // TODO: (Q4)
         //  If bird hits tube, game should reset by resetting the tubes and resetting the bird
         //  to its initial state (i.e., restarting the game)
         // ====== ====== ======
+    }
+
+    void resetBird(){
+        resetTubes();
+        bird.shape.setPosition({BIRD_INIT_X, BIRD_INIT_Y});
+        bird.velocityY = INITIAL_BIRD_VELOCITY_Y;
     }
 
 public:
