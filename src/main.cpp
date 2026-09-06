@@ -129,6 +129,7 @@ private:
         //    Should be equivalent to: bird.positionY += bird.velocityY;
         //  - Note: bird's x-coordinate will alway be exactly 100.f
         // ====== ====== ======
+        bird.shape.setPosition(bird.shape.getPosition() + sf::Vector2f{0.f, bird.velocityY});
 
         // ====== ====== ======
         // TODO: (Q3)
@@ -136,6 +137,11 @@ private:
         //    (i.e., if it's no longer visible). If not, game should reset by clearing
         //    the tubes and restarting the game (setting the bird back to original initial position)
         // ====== ====== ======
+        float yPos = bird.shape.getPosition().y;
+        if (yPos < 0 || yPos > 800){
+            resetTubes();
+            bird.shape.setPosition({BIRD_INIT_X, BIRD_INIT_Y});
+        }
     }
 
     void updateTubes() {
@@ -198,6 +204,7 @@ void handleInput(sf::Window& window, GameState& gameState, const ResourceManager
         if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()){
             if (keyPressed->scancode == sf::Keyboard::Scan::Space){
                 resources.jumpSound->play();
+                gameState.bird.velocityY = JUMP_SPEED;
             }
         }
     }
